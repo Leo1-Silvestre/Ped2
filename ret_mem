@@ -1,0 +1,103 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 18.05.2019 17:21:36
+-- Design Name: 
+-- Module Name: mem_ret - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity mem_ret is
+    Port ( clk : in STD_LOGIC;
+           rst : in STD_LOGIC;
+           lib : in STD_LOGIC;
+           sol : out STD_LOGIC;
+           ad : out STD_LOGIC_VECTOR (1 downto 0);
+           sw : in STD_LOGIC_VECTOR (3 downto 0));
+end mem_ret;
+
+architecture Behavioral of mem_ret is
+
+signal sw_aux:STD_LOGIC_VECTOR (3 downto 0);
+signal ad_aux: integer range 0 to 3;
+
+begin
+
+--######################### atualizacao do andar desejado #########################
+process(clk,rst,lib,ad_aux)
+begin
+    if rst='1' then
+        sw_aux<=(others=>'0');
+        ad<=(others=>'0');
+    elsif lib='1' then
+        sw_aux(ad_aux)<='0'; 
+        ad <= STD_LOGIC_VECTOR(to_unsigned(ad_aux, ad'length));   
+    else
+      if rising_edge(clk)then
+        
+        for i in 0 to 3 loop
+            if sw(i)='1' then
+                sw_aux(i)<='1';
+            end if;
+        end loop;
+      
+      end if;  
+    end if;
+end process;
+
+--########################## aplicacao do algoritmo de selecao #########################
+process(sw_aux,lib,clk)
+variable high, eq, low: integer range 0 to 3;
+begin
+
+if lib='0' and rising_edge(clk) then
+    
+    for i in 3 downto 0 loop
+        if sw_aux(i)='1' and i > ad_aux then
+            high:=i;
+        elsif sw_aux(i)='1' and i < ad_aux then
+            low:=i;
+        elsif sw_aux(i)='1' and i = ad_aux then
+            eq:=i;
+        end if;
+    end loop;
+    
+    if high>ad_aux and sw_aux(ad_aux)='1'then
+        ad_aux<=high;
+        sol<='1';
+    elsif eq=ad_aux and sw_aux(ad_aux)='1' then
+        ad_aux<=eq;
+        sol<='1';
+    elsif low<ad_aux and sw_aux(ad_aux)='1' then
+        ad_aux<=low;
+        sol<='1';
+    else
+        sol<='0';
+    end if;
+end if;   
+end process;
+
+
+end Behavioral;
