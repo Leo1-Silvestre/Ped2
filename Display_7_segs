@@ -1,0 +1,99 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 19.05.2019 19:33:04
+-- Design Name: 
+-- Module Name: display - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity display is
+    Port ( seg : out STD_LOGIC_VECTOR (6 downto 0);
+           an : out STD_LOGIC_VECTOR (3 downto 0);
+           clk : in STD_LOGIC;
+           door:in STD_LOGIC;
+           AA: in STD_LOGIC_VECTOR (3 downto 0));
+end display;
+
+architecture Behavioral of display is
+signal clk_7_segs:STD_LOGIC;
+begin
+
+process(clk)
+variable counter: integer range 0 to 200000;
+begin
+    if rising_edge(clk)then
+    if counter=200000 then
+        clk_7_segs<=not(clk_7_segs);
+        counter:=0;
+    else
+        counter:= counter+1;
+    end if;
+    end if;
+end process;
+
+process(clk_7_segs,AA)
+variable counter:STD_LOGIC_VECTOR (1 downto 0);
+begin
+    if rising_edge(clk_7_segs)then
+        if (counter="00") then
+            counter:=counter + 1;
+            an<="1110";
+                if AA="1000" then
+                    seg<="001"&(not(door))&"10"&(not(door));
+                else
+                    seg<="1110111";
+                end if;
+        elsif (counter="01") then
+            counter:=counter + 1;
+            an<="1101";
+                if AA="0100" then
+                    seg<="001"&(not(door))&"10"&(not(door));
+                else
+                    seg<="1110111";
+                end if;
+        elsif (counter="10") then
+            counter:=counter + 1;
+            an<="1011";
+                if AA="0010" then
+                    seg<="001"&(not(door))&"10"&(not(door));
+                else
+                    seg<="1110111";
+                end if;
+        elsif (counter="11") then
+            counter:="00";
+            an<="0111";
+                if AA="0001" then
+                    seg<="001"&(not(door))&"10"&(not(door));
+                else
+                    seg<="1110111";
+                end if;
+        end if;
+    end if;    
+
+end process;
+
+
+end Behavioral;
