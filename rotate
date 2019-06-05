@@ -1,0 +1,215 @@
+;ROTATE
+CONSTANT sw,01
+CONSTANT LEDS,02
+
+start:
+INPUT s0,sw
+LOAD s1,s0
+LOAD s2,s0
+LOAD s3,s0
+LOAD s9,00
+
+AND s1,03 ; PADRAO
+AND s2,04 ; DIRECAO
+AND s3, 18; VELOCIDADE
+LOAD s5,00
+LOAD s6,00
+LOAD s7,00
+LOAD s8,00
+
+COMPARE s1, 03
+  JUMP NZ,pat3
+  LOAD s4,0D
+  JUMP VER
+
+pat3:
+COMPARE s1,02
+  JUMP NZ,pat2
+  LOAD s4,0F
+  JUMP VER
+
+pat2:
+COMPARE s1,01
+  JUMP NZ,pat1
+  LOAD s4,03
+  JUMP VER
+pat1:
+COMPARE s1,00
+  LOAD s4,01
+
+VER:
+COMPARE s3,18
+  JUMP Z, HZ8
+COMPARE s3,10
+  JUMP Z, HZ4
+COMPARE s3,08
+  JUMP Z, HZ2
+COMPARE s3,00
+  JUMP Z, HZ1
+
+
+HZ1:
+  OUTPUT s4,LEDS
+  COMPARE s9,08
+  JUMP Z, start
+    COMPARE s5,01
+      JUMP NZ, sum1
+    COMPARE s6,7D
+      JUMP NZ, sum1
+    COMPARE s7,78
+      JUMP NZ, sum1
+    COMPARE s8,40
+      JUMP NZ, sum1
+    JUMP ROTATE1
+sum1:
+    AND s8,s8
+    ADD s8,01
+    ADDCY s7,00
+    ADDCY s6,00
+    ADDCY s5,00
+    JUMP HZ1
+
+ROTATE1:
+COMPARE s2,04
+JUMP NZ, else1
+  RR s4
+  ADD s9,01
+  LOAD s5,00
+  LOAD s6,00
+  LOAD s7,00
+  LOAD s8,00
+  JUMP HZ1
+else1:
+  RL s4
+  ADD s9,01
+  LOAD s5,00
+  LOAD s6,00
+  LOAD s7,00
+  LOAD s8,00
+  JUMP HZ1
+
+
+HZ2:
+OUTPUT s4,LEDS
+COMPARE s9,08
+JUMP Z, start
+  COMPARE s5,00
+    JUMP NZ, sum2
+  COMPARE s6,BE
+    JUMP NZ, sum2
+  COMPARE s7,BC
+    JUMP NZ, sum2
+  COMPARE s8,20
+    JUMP NZ, sum2
+  JUMP ROTATE2
+
+sum2:
+  AND s8,s8
+  ADD s8,01
+  ADDCY s7,00
+  ADDCY s6,00
+  ADDCY s5,00
+  JUMP HZ2
+
+ROTATE2:
+    COMPARE s2,04
+    JUMP NZ, else2
+      RR s4
+      ADD s9,01
+      LOAD s5,00
+      LOAD s6,00
+      LOAD s7,00
+      LOAD s8,00
+      JUMP HZ2
+    else2:
+      RL s4
+      ADD s9,01
+      LOAD s5,00
+      LOAD s6,00
+      LOAD s7,00
+      LOAD s8,00
+      JUMP HZ2
+
+
+HZ4:
+OUTPUT s4,LEDS
+COMPARE s9,08
+JUMP Z, start
+  COMPARE s5,00
+    JUMP NZ, sum3
+  COMPARE s6,5F
+    JUMP NZ, sum3
+  COMPARE s7,5E
+    JUMP NZ, sum3
+  COMPARE s8,10
+    JUMP NZ, sum3
+  JUMP ROTATE3
+
+sum3:
+      AND s8,s8
+      ADD s8,01
+      ADDCY s7,00
+      ADDCY s6,00
+      ADDCY s5,00
+      JUMP HZ4
+
+ROTATE3:
+    COMPARE s2,04
+    JUMP NZ, else3
+      RR s4
+      ADD s9,01
+      LOAD s5,00
+      LOAD s6,00
+      LOAD s7,00
+      LOAD s8,00
+      JUMP HZ4
+    else3:
+      RL s4
+      ADD s9,01
+      LOAD s5,00
+      LOAD s6,00
+      LOAD s7,00
+      LOAD s8,00
+      JUMP HZ4
+
+
+HZ8:
+OUTPUT s4,LEDS
+COMPARE s9,08
+JUMP Z, start
+  COMPARE s5,00
+    JUMP NZ, sum4
+  COMPARE s6,2F
+    JUMP NZ, sum4
+  COMPARE s7,AF
+    JUMP NZ, sum4
+  COMPARE s8,08
+    JUMP NZ, sum4
+  JUMP ROTATE4
+
+sum4:
+      AND s8,s8
+      ADD s8,01
+      ADDCY s7,00
+      ADDCY s6,00
+      ADDCY s5,00
+      JUMP HZ8
+
+ROTATE4:
+    COMPARE s2,04
+    JUMP NZ, else4
+      RR s4
+      ADD s9,01
+      LOAD s5,00
+      LOAD s6,00
+      LOAD s7,00
+      LOAD s8,00
+      JUMP HZ8
+else4:
+      RL s4
+      ADD s9,01
+      LOAD s5,00
+      LOAD s6,00
+      LOAD s7,00
+      LOAD s8,00
+      JUMP HZ8
